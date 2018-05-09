@@ -1,3 +1,5 @@
+BOARD_VENDOR := htc
+
 # Bootloader
 TARGET_NO_BOOTLOADER := true
 
@@ -19,32 +21,34 @@ TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
 
 # Kernel
-BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 androidusb.pid=0x05f3 androidboot.hardware=mt6752 androidboot.selinux=permissive
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 androidusb.pid=0x05f3 androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x40078000
 BOARD_KERNEL_PAGESIZE := 2048
-BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0x03f88000 --tags_offset 0x0df88000
-TARGET_PREBUILT_KERNEL := device/htc/a50ml/kernel
+BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0x03f88000 --tags_offset 0x0df88000 --second_offset 0x00e88000
+TARGET_PREBUILT_KERNEL := device/htc/$(TARGET_DEVICE)/kernel
 
-# Partitions
-BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
-BOARD_RECOVERYIMAGE_PARTITION_SIZE := 16777216
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2474639360
-BOARD_USERDATAIMAGE_PARTITION_SIZE := 12553551872
-BOARD_FLASH_BLOCK_SIZE := 131072
+# Use custom mkbootimg to create MTK type image
+BOARD_CUSTOM_BOOTIMG_MK := device/htc/$(TARGET_DEVICE)/boot.mk
+
+BOARD_BOOTIMAGE_PARTITION_SIZE := 33554432
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 33554432
+BOARD_FLASH_BLOCK_SIZE := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
+BOARD_VOLD_EMMC_SHARES_DEV_MAJOR := true
+
 TARGET_USERIMAGES_USE_EXT4 := true
-
-# Recovery
-BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_HAS_NO_SELECT_BUTTON := true
-BOARD_RECOVERY_SWIPE := true
 BOARD_SUPPRESS_SECURE_ERASE := true
-TARGET_RECOVERY_DEVICE_MODULES := chargeled
-TW_CUSTOM_CPU_TEMP_PATH := /sys/class/thermal/thermal_zone1/temp
 
 # TWRP Build Flags
+TARGET_USE_CUSTOM_LUN_FILE_PATH := /sys/class/android_usb/android0/f_mass_storage/lun%d/file
 TW_THEME := portrait_hdpi
-TW_EXCLUDE_DEFAULT_USB_INIT := true
+TW_BRIGHTNESS_PATH := /sys/class/leds/lcd-backlight/brightness
+TW_CUSTOM_CPU_TEMP_PATH := /sys/devices/virtual/thermal/thermal_zone1/temp
+TW_MAX_BRIGHTNESS := 255
+TW_DEFAULT_BRIGHTNESS := 178
 TW_HAS_DOWNLOAD_MODE := true
 TW_INCLUDE_CRYPTO := true
+TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_NO_EXFAT_FUSE := true
-TW_NO_SCREEN_BLANK := true
+TARGET_RECOVERY_QCOM_RTC_FIX := true
+TARGET_RECOVERY_DEVICE_MODULES := chargeled
