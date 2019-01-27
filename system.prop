@@ -1,2 +1,0 @@
-# Disable usbcdrom lun
-persist.service.cdrom.enable=0
